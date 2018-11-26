@@ -1,76 +1,122 @@
+import java.awt.event.ActionEvent;
 import java.sql.*;
-
-import java.awt.Color;
-
+import java.awt.*;
 import javax.swing.*;
 
+import java.util.Scanner;
+
+
+
 public class Main {
+    public static final int select = 1 ;
+    public static final int insert = 2;
+    public static final int delete = 3;
 
     public static void main(String[] args) throws Exception {
         //获取连接
 //        connect a = new connect();
 //        Connection con = a.getConnection();
-//        addbach_test(con);
-//        select_test(con);
-//        con.close();
+//
+//        String command = "insert into S values ";
+//        int operation = transCommand(command);
+//        switch (operation){
+//            case select :
+//                select_test(con,command);
+//                break;
+//            case insert :
+//                insert_test(con,command);
+//
+//        }
+
 
         JFrame f = new JFrame("LoL");
         f.setSize(400, 300);
-        f.setLocation(580, 200);
-        f.setLayout(null);
-        JCheckBox bCheckBox = new JCheckBox("物理英雄");
-        //设置 为 默认被选中
-        bCheckBox.setSelected(true);
-        bCheckBox.setBounds(50, 50, 130, 30);
-        JCheckBox bCheckBox2 = new JCheckBox("魔法英雄");
-        bCheckBox2.setBounds(50, 100, 130, 30);
-        //判断 是否 被 选中
-        System.out.println(bCheckBox2.isSelected());
+        f.setLocation(200, 200);
 
-        f.add(bCheckBox);
-        f.add(bCheckBox2);
+        f.setLayout(new FlowLayout());
+
+        JLabel lName = new JLabel("账号：");
+        // 输入框
+        JTextField tfName = new JTextField("");
+        tfName.setText("请输入账号");
+        tfName.setPreferredSize(new Dimension(80, 30));
+//        System.out.println(a);
+
+        JLabel lPassword = new JLabel("密码：");
+        // 输入框
+        JTextField tfPassword = new JTextField("");
+        tfPassword.setText("请输入密码");
+        tfPassword.setPreferredSize(new Dimension(80, 30));
+
+        f.add(lName);
+        f.add(tfName);
+        f.add(lPassword);
+        f.add(tfPassword);
+
+
+
+        JButton b = new JButton("一键秒对方基地挂");
+        b.setBounds(50, 50, 280, 30);
+
+
+
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         f.setVisible(true);
+        tfPassword.grabFocus();
+
+
+
 
 
 
 
     }
 
-    static void select_test(Connection con){
+
+    static int transCommand(String s) {
+
+        int operate ;
+        String first_word = s.split("\\s+")[0];
+        System.out.println(first_word);
+        if (first_word.equals("select"))
+            operate = select;
+        else if(first_word.equals("insert"))
+            operate = insert;
+        else if(first_word.equals("delete"))
+            operate = delete;
+        else operate = 0;
+
+        return operate;
+    }
+
+
+    //数据库操作们
+    static void select_test(Connection con,String command){
 
         try {
             int count = 0;
 
-//            Statement 只能执行固定的语句，而prepared可以执行带参数的
-//            用Statement
-//            Statement ps = con.createStatement();
-//            ResultSet rs = ps.executeQuery("select * from S ");
-//            while (rs.next()) {
-//                System.out.println("第"+count+"行:");
-//                System.out.println(rs.getString("sno"));
-//                System.out.println(rs.getString("sname"));
-//                System.out.println(rs.getString("ssex"));
-//                System.out.println(rs.getString("sbirth"));
-//                System.out.println(rs.getString("sdept"));
-//                System.out.println('\n');
-//                count += 1;
-//            }
-
-            //use preparedstatement
             //we cannot use select ? from...,it will not select out what we want
-            String s = "select sno,sname,ssex,sbirth,sdept from S where sdept = \'CS\'";
-            PreparedStatement ps = con.prepareStatement(s);
+            String [] operation_list = command.split("\\s+");
+
+            PreparedStatement ps = con.prepareStatement(command);
             ResultSet rs = ps.executeQuery();
+
+            //  select *
+            //  select a,b,c
+            //  select S.sno,C.cno
+            //  select S.sno sno1
 
             while (rs.next()) {
                 System.out.println("第"+count+"行:");
-                System.out.println(rs.getString("sno"));
-                System.out.println(rs.getString("sname"));
-                System.out.println(rs.getString("ssex"));
-                System.out.println(rs.getString("sbirth"));
-                System.out.println(rs.getString("sdept"));
+                for(int i = 1 ;i<= operation_list.length;i++){
+                    if(operation_list[i].equals("from"))
+                        break;
+                    if(operation_list[i].equals(","))
+                        continue;
+                    System.out.println(rs.getString(operation_list[i]));
+                }
                 System.out.println('\n');
                 count += 1;
             }
@@ -83,7 +129,7 @@ public class Main {
             e.printStackTrace();
         }
     }
-    static void insert_test(Connection con){
+    static void insert_test(Connection con,String command){
         try {
 
 //            String s = "insert into S(sno,sname,ssex,sbirth,sdept) " +
@@ -106,7 +152,7 @@ public class Main {
             e.printStackTrace();
         }
     }
-    static void delete_test(Connection con){
+    static void delete_test(Connection con,String command){
         try{
             String s = "delete from S where sname = \'test\'";
             PreparedStatement ps = con.prepareStatement(s);
@@ -244,6 +290,7 @@ public class Main {
 
 
     }
+
 }
 
 class connect{
