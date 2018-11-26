@@ -1,1 +1,8 @@
+easygui示例
 https://blog.csdn.net/Marksinoberg/article/details/51499909
+
+Python连接SqlServer数据库-pymssql进阶
+https://blog.csdn.net/caomaoou/article/details/80771431
+
+Python连接SQL Server数据库 - pymssql使用基础
+https://www.cnblogs.com/baiyangcao/p/pymssql_basic.html
